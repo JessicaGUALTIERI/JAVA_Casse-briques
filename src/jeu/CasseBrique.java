@@ -2,6 +2,7 @@ package jeu;
 
 import jeu.models.Balle;
 import jeu.models.Barre;
+import jeu.models.Bonus;
 import jeu.models.Brique;
 
 import javax.swing.*;
@@ -86,6 +87,7 @@ public class CasseBrique extends Canvas implements KeyListener {
                     balle.dessiner(dessin);
                     balle.deplacement();
 
+
                     //pour chaque brique, tester la collision
                     //stocker dans une liste les brique impactées
                     //apres le foreach des briques, supprimer les brique impactées
@@ -106,6 +108,9 @@ public class CasseBrique extends Canvas implements KeyListener {
                     }
                     for (Brique brique : listeBriqueSuppr) {
                         listeBrique.remove(brique);
+                        Bonus bonus = new Bonus(brique.getX()+(LARGEUR/5)/2,brique.getY()+5,15); //AJOUT PERSO
+                        bonus.dessiner(dessin); // AJOUT PERSO
+                        bonus.chute(); // AJOUT PERSO
                     }
                     if (compteurBrique == 50) {
                         System.out.println("GGWP +20LP");
@@ -125,6 +130,7 @@ public class CasseBrique extends Canvas implements KeyListener {
                 System.out.println("processus arreté");
             }
         }
+        
     }
 
     @Override
