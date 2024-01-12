@@ -2,6 +2,8 @@ package jeu.models;
 
 import jeu.CasseBrique;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Random;
 
 import static jeu.CasseBrique.HAUTEUR;
 
@@ -31,6 +33,13 @@ public class Bonus extends Sprite {
     }
 
 
+    // AJOUT AUTOMATIQUE POUR FAIRE FONCTIONNER L'EXTEND DE SPRITE
+    public void dessiner(Graphics2D dessin) {
+        dessin.setColor(couleur);
+        dessin.fillOval(x, y,  diametre, diametre);
+    }
+
+
     // GETTER ET SETTER
     public int getDiametre() {
         return diametre;
@@ -46,12 +55,5 @@ public class Bonus extends Sprite {
 
     public void setVitesseChute(int vitesseChute) {
         this.vitesseChute = vitesseChute;
-    }
-
-
-    // AJOUT AUTOMATIQUE POUR FAIRE FONCTIONNER L'EXTEND DE SPRITE
-    public void dessiner(Graphics2D dessin) {
-        dessin.setColor(couleur);
-        dessin.fillOval(x, y,  diametre, diametre);
     }
 }

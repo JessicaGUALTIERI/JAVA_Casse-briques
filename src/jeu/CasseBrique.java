@@ -1,5 +1,7 @@
 package jeu;
 
+import java.util.Random;
+
 import jeu.models.Balle;
 import jeu.models.Barre;
 import jeu.models.Bonus;
@@ -21,7 +23,10 @@ public class CasseBrique extends Canvas implements KeyListener {
     protected ArrayList<Brique> listeBrique = new ArrayList<>();
     protected ArrayList<Brique> listeBriqueSuppr = new ArrayList<>();
     protected ArrayList<Bonus> listeBonus = new ArrayList<>();
+    protected ArrayList<Bonus> listeBonusChute = new ArrayList<>();
     protected Barre barre = new Barre();
+
+
     public CasseBrique() {
 
         JFrame fenetre = new JFrame();
@@ -48,56 +53,55 @@ public class CasseBrique extends Canvas implements KeyListener {
     }
 
     public void demarrer() {
-
+        // CRÉATION DE(S) BALLE(S) :
         for(int i = 0 ; i < 1 ; i++) {
             listeBalle.add(new Balle(LARGEUR/2,HAUTEUR-100,20));
         }
+        // CRÉATION DES BRIQUES
         int yRandom = 0;
         for (int i=0;i<10;i++) {
             int xRandom = 0;
             for(int j=0;j<5;j++) {
                 listeBrique.add(new Brique(xRandom,yRandom,Color.darkGray,LARGEUR/5,20));
+                for (Brique brique : listeBrique) {
+                    listeBonus.add(new Bonus(brique.getCentreX(), brique.getCentreY(), 10));
+                }
                 xRandom+= LARGEUR/5 + 2;
             }
             yRandom += 22;
         }
 
-        //Créer 5 x 10 briques
-        //alimenter l' ArrayList listeBrique
-        //3 lignes
-
         while(true) {
-
             try {
-
+                // DÉBUT DU DESSIN
                 Graphics2D dessin = (Graphics2D) this.getBufferStrategy().getDrawGraphics();
 
+                // CE QUI RESET TOUT EN BLANC ENTRE DEUX IMAGES
                 dessin.setColor(Color.WHITE);
                 dessin.fillRect(0,0, LARGEUR, HAUTEUR);
 
+                // AFFICHAGE DE LA BARRE
                 barre.dessiner(dessin);
 
-                //afficher toutes les briques (3 lignes)
+                // AFFICHAGE DES BRIQUES
                 for (Brique brique : listeBrique) {
                     brique.dessiner(dessin);
                 }
 
+                // DÉPLACEMENT DE LA BALLE ET CE QUE ÇA IMPLIQUE (COLLISION, RETRAIT DE BRIQUES ETC)
                 for(Balle balle : listeBalle) {
                     balle.dessiner(dessin);
                     balle.deplacement();
 
-
-                    //pour chaque brique, tester la collision
-                    //stocker dans une liste les brique impactées
-                    //apres le foreach des briques, supprimer les brique impactées
-
-                    //Note : parce qu'on ne peut pas supprimer un element d'une liste
-                    // alors qu'on parcours cette liste
-
+                    // SI LA BALLE TAPE LA BARRE, ON INVERSE LE DÉPLACEMENT DE LA BALLE
                     if(barre.collision(balle)){
                         balle.setVitesseVertical(-balle.getVitesseVertical());
                     }
 
+                    // SI LA BALLE TAPE UNE BRIQUE,
+                        // ON INVERSE LE DEPLACEMENT DE LA BALLE
+                        // ON AJOUTE CETTE BRIQUE A LA LISTE DES BRIQUES A SUPPRIMER
+                        // ON INCRÉMENTE LE COMPTEUR POUR LA FIN DU PROGRAMME
                     for (Brique brique : listeBrique) {
                         if (brique.collision(balle)) {
                             balle.setVitesseVertical(-balle.getVitesseVertical());
@@ -105,28 +109,35 @@ public class CasseBrique extends Canvas implements KeyListener {
                             compteurBrique++;
                         }
                     }
+
+                    // ET ICI ON RETIRE LA BRIQUE TOUCHÉE
                     for (Brique brique : listeBriqueSuppr) {
                         listeBrique.remove(brique);
-                        Bonus bonus = new Bonus(brique.getCentreX(),brique.getCentreY(),10);
-                        listeBonus.add(bonus);
+                        for (Bonus bonus : listeBonus) {
+                            if (brique.getCentreX() == bonus.getCentreX() && brique.getCentreY() == bonus.getCentreY()) {
+                                listeBonusChute.add(bonus);
+                            }
+                        }
                     }
 
-                    for (Bonus bonus : listeBonus) {
+                    for (Bonus bonus : listeBonusChute) {
                         bonus.dessiner(dessin);
                         bonus.chute();
                     }
 
-                    if (compteurBrique == 50) {
+                    // ICI C'EST LES DEUX CONDITIONS DE FIN DU PROGRAMME (PAS FINIE)
+                        // VICTOIRE SI LES 50 BRIQUES SONT DÉTRUITES
+                    /*if (compteurBrique == 50) {
                         System.out.println("GGWP +20LP");
                         break;
                     }
+                        // DÉFAITE SI LA BALLE PASSE SOUS LA BARRE
                     if (balle.getCentreY()>HAUTEUR-50) {
                         System.out.println("LOOSER -48LP");
                         break;
-                    }
+                    }*/
                 }
-
-
+                // FIN DU DESSIN
                 dessin.dispose();
                 this.getBufferStrategy().show();
 

@@ -17,4 +17,6 @@ public class Brique extends Rectangle{
     public int getCentreY() {
         return y + (hauteur / 2 - 5); // -5 car 5 est la moitié de la largeur du bonus, permet de bien centrer
     }
+
+
 }
