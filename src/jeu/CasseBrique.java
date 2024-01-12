@@ -20,6 +20,7 @@ public class CasseBrique extends Canvas implements KeyListener {
     protected ArrayList<Balle> listeBalle = new ArrayList<>();
     protected ArrayList<Brique> listeBrique = new ArrayList<>();
     protected ArrayList<Brique> listeBriqueSuppr = new ArrayList<>();
+    protected ArrayList<Bonus> listeBonus = new ArrayList<>();
     protected Barre barre = new Barre();
     public CasseBrique() {
 
@@ -76,8 +77,6 @@ public class CasseBrique extends Canvas implements KeyListener {
 
                 barre.dessiner(dessin);
 
-
-
                 //afficher toutes les briques (3 lignes)
                 for (Brique brique : listeBrique) {
                     brique.dessiner(dessin);
@@ -108,10 +107,15 @@ public class CasseBrique extends Canvas implements KeyListener {
                     }
                     for (Brique brique : listeBriqueSuppr) {
                         listeBrique.remove(brique);
-                        Bonus bonus = new Bonus(brique.getX()+(LARGEUR/5)/2,brique.getY()+5,15); //AJOUT PERSO
-                        bonus.dessiner(dessin); // AJOUT PERSO
-                        bonus.chute(); // AJOUT PERSO
+                        Bonus bonus = new Bonus(brique.getCentreX(),brique.getCentreY(),10);
+                        listeBonus.add(bonus);
                     }
+
+                    for (Bonus bonus : listeBonus) {
+                        bonus.dessiner(dessin);
+                        bonus.chute();
+                    }
+
                     if (compteurBrique == 50) {
                         System.out.println("GGWP +20LP");
                         break;
@@ -121,6 +125,7 @@ public class CasseBrique extends Canvas implements KeyListener {
                         break;
                     }
                 }
+
 
                 dessin.dispose();
                 this.getBufferStrategy().show();

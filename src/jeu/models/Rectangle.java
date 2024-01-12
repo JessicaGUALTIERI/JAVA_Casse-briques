@@ -36,6 +36,13 @@ public class Rectangle extends Sprite {
                 && balle.getCentreY() < y + hauteur);
     }
 
+    public boolean collision(Bonus bonus) {
+        return (bonus.getCentreX() > x
+                && bonus.getCentreX() < x + largeur
+                && bonus.getCentreY() > y
+                && bonus.getCentreY() < y + hauteur);
+    }
+
     @Override
     public void dessiner(Graphics2D dessin) {
         dessin.setColor(couleur);
