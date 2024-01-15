@@ -31,4 +31,10 @@ public class Barre extends Rectangle {
             x += vitesse;
         }
     }
+
+    public void barreBonus() {
+        if (largeur < CasseBrique.LARGEUR) {
+            largeur += 1;
+        }
+    }
 }

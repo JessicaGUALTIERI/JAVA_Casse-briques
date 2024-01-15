@@ -25,6 +25,7 @@ public class CasseBrique extends Canvas implements KeyListener {
     protected ArrayList<Bonus> listeBonus = new ArrayList<>();
     protected ArrayList<Bonus> listeBonusChute = new ArrayList<>();
     protected Barre barre = new Barre();
+    boolean mustEnd = false;
 
 
     public CasseBrique() {
@@ -114,16 +115,27 @@ public class CasseBrique extends Canvas implements KeyListener {
                     for (Brique brique : listeBriqueSuppr) {
                         listeBrique.remove(brique);
                         for (Bonus bonus : listeBonus) {
-                            if (brique.getCentreX() == bonus.getCentreX() && brique.getCentreY() == bonus.getCentreY()) {
+                            if (brique.getCentreX() == bonus.getCentreX()- bonus.getDiametre()/2 && brique.getCentreY() == bonus.getCentreY()- bonus.getDiametre()/2) {
                                 listeBonusChute.add(bonus);
                             }
                         }
                     }
 
+
+
                     for (Bonus bonus : listeBonusChute) {
-                        bonus.dessiner(dessin);
-                        bonus.chute();
+                        if (!mustEnd) {
+                            bonus.dessiner(dessin);
+                            bonus.chute();
+                        }
+                        if (barre.collision(bonus)) {
+                            mustEnd = true;
+                            barre.barreBonus();
+                            System.out.println(barre.getLargeur());
+                            break;
+                        }
                     }
+
 
                     // ICI C'EST LES DEUX CONDITIONS DE FIN DU PROGRAMME (PAS FINIE)
                         // VICTOIRE SI LES 50 BRIQUES SONT DÉTRUITES

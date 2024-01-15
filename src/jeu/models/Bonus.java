@@ -25,11 +25,11 @@ public class Bonus extends Sprite {
     }
 
     public int getCentreX() {
-        return x;
+        return x + diametre/2;
     }
 
     public int getCentreY() {
-        return y;
+        return y + diametre/2;
     }
 
 
