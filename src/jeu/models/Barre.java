@@ -34,7 +34,7 @@ public class Barre extends Rectangle {
 
     public void barreBonus() {
         if (largeur < CasseBrique.LARGEUR) {
-            largeur += 1;
+            largeur += 10/3; // J'ai du divisé par 3 car le bonus s'appliquait 3x, pas encore compris pourquoi...
         }
     }
 }

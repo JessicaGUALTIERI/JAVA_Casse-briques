@@ -1,5 +1,6 @@
 package jeu;
 
+import java.lang.reflect.Array;
 import java.util.Random;
 
 import jeu.models.Balle;
@@ -24,8 +25,8 @@ public class CasseBrique extends Canvas implements KeyListener {
     protected ArrayList<Brique> listeBriqueSuppr = new ArrayList<>();
     protected ArrayList<Bonus> listeBonus = new ArrayList<>();
     protected ArrayList<Bonus> listeBonusChute = new ArrayList<>();
+    protected ArrayList<Bonus> listeBonusSuppr = new ArrayList<>();
     protected Barre barre = new Barre();
-    boolean mustEnd = false;
 
 
     public CasseBrique() {
@@ -124,16 +125,18 @@ public class CasseBrique extends Canvas implements KeyListener {
 
 
                     for (Bonus bonus : listeBonusChute) {
-                        if (!mustEnd) {
+                        if (bonus.getChance20() > 8) { // Condition de 20% de chance qu'un bonus apparaisse
                             bonus.dessiner(dessin);
                             bonus.chute();
+                            if (barre.collision(bonus)) {
+                                listeBonusSuppr.add(bonus); // Si collision, on arrêtera de dessiner ce bonus (voir ci-dessous)
+                                barre.barreBonus();
+                            }
                         }
-                        if (barre.collision(bonus)) {
-                            mustEnd = true;
-                            barre.barreBonus();
-                            System.out.println(barre.getLargeur());
-                            break;
-                        }
+                    }
+
+                    for (Bonus bonus : listeBonusSuppr) { // On stoppe le dessin du bonus si collision
+                        listeBonusChute.remove(bonus);
                     }
 
 

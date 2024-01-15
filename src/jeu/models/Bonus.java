@@ -11,6 +11,7 @@ public class Bonus extends Sprite {
 
     private int diametre;
     private int vitesseChute;
+    private int chance20 = new Random().nextInt(1,10);
 
     // CONSTRUCTEUR
     public Bonus(int x, int y, int diametre) {
@@ -30,6 +31,10 @@ public class Bonus extends Sprite {
 
     public int getCentreY() {
         return y + diametre/2;
+    }
+
+    public int getChance20() {
+        return chance20;
     }
 
 
