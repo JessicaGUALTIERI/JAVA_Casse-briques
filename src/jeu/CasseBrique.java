@@ -1,18 +1,16 @@
 package jeu;
 
+import java.awt.event.*;
 import java.lang.reflect.Array;
 import java.util.Random;
 
-import jeu.models.Balle;
-import jeu.models.Barre;
-import jeu.models.Bonus;
-import jeu.models.Brique;
+import jeu.models.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import java.awt.event.MouseEvent;
+
 
 public class CasseBrique extends Canvas implements KeyListener {
 
@@ -27,6 +25,7 @@ public class CasseBrique extends Canvas implements KeyListener {
     protected ArrayList<Bonus> listeBonusChute = new ArrayList<>();
     protected ArrayList<Bonus> listeBonusSuppr = new ArrayList<>();
     protected Barre barre = new Barre();
+    Bouton pause = new Bouton();
 
 
     public CasseBrique() {
@@ -47,6 +46,9 @@ public class CasseBrique extends Canvas implements KeyListener {
 
         Container panneau = fenetre.getContentPane();
         panneau.add(this);
+
+
+        // pause.mouseClicked(); ?????
 
 
         fenetre.setVisible(true);
@@ -78,12 +80,15 @@ public class CasseBrique extends Canvas implements KeyListener {
                 // DÉBUT DU DESSIN
                 Graphics2D dessin = (Graphics2D) this.getBufferStrategy().getDrawGraphics();
 
+
                 // CE QUI RESET TOUT EN BLANC ENTRE DEUX IMAGES
                 dessin.setColor(Color.WHITE);
                 dessin.fillRect(0,0, LARGEUR, HAUTEUR);
 
                 // AFFICHAGE DE LA BARRE
                 barre.dessiner(dessin);
+
+                pause.dessiner(dessin);
 
                 // AFFICHAGE DES BRIQUES
                 for (Brique brique : listeBrique) {
