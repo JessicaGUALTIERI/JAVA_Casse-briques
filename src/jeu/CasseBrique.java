@@ -1,8 +1,6 @@
 package jeu;
 
 import java.awt.event.*;
-import java.lang.reflect.Array;
-import java.util.Random;
 
 import jeu.models.*;
 
@@ -12,7 +10,7 @@ import java.util.ArrayList;
 import java.awt.event.MouseEvent;
 
 
-public class CasseBrique extends Canvas implements MouseListener {
+public class CasseBrique extends Canvas implements KeyListener, MouseListener {
 
     public static final int LARGEUR = 500;
     public static final int HAUTEUR = 600;
@@ -42,13 +40,11 @@ public class CasseBrique extends Canvas implements MouseListener {
         fenetre.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         fenetre.setResizable(false);
         fenetre.requestFocus();
+        fenetre.addKeyListener(this);
         this.addMouseListener(this);
 
         Container panneau = fenetre.getContentPane();
         panneau.add(this);
-
-
-        // pause.mouseClicked(); ?????
 
 
         fenetre.setVisible(true);
@@ -57,6 +53,7 @@ public class CasseBrique extends Canvas implements MouseListener {
     }
 
     public void demarrer() {
+
         // CRÉATION DE(S) BALLE(S) :
         for(int i = 0 ; i < 1 ; i++) {
             listeBalle.add(new Balle(LARGEUR/2,HAUTEUR-100,20));
@@ -74,12 +71,15 @@ public class CasseBrique extends Canvas implements MouseListener {
             }
             yRandom += 22;
         }
-        CanvasBouton boutonPause = new CanvasBouton(100,50, "Pause");
-        boutonPause.addEvenementBouton(new EvenementPause());
+        CanvasBouton boutonPause = new CanvasBouton(LARGEUR/2-120,HAUTEUR-60, Color.BLACK,100,30,"Pause");
+        boutonPause.addEvenementBouton(
+                () -> System.out.println("PAUSE"));
         listeBouton.add(boutonPause);
 
-        CanvasBouton boutonRestart = new CanvasBouton(220,50, "Restart");
-        boutonRestart.addEvenementBouton(new EvenementRecommencer());
+        CanvasBouton boutonRestart = new CanvasBouton(LARGEUR/2+20,HAUTEUR-60, Color.BLACK, 100, 30, "Restart");
+        boutonRestart.addEvenementBouton(
+                () -> System.out.println("RECOMMENCER LA PARTIE")
+        );
         listeBouton.add(boutonRestart);
 
         while(true) {
@@ -176,26 +176,9 @@ public class CasseBrique extends Canvas implements MouseListener {
                 System.out.println("processus arreté");
             }
         }
-        
     }
 
 
-    public void keyPressed(KeyEvent e) {
-
-        //quand la touche gauche est enfoncée
-        if(e.getKeyCode() == 37) {
-            barre.deplacerGauche();
-        } else if (e.getKeyCode() == 39) {
-            //quand la touche droite est enfoncée
-            barre.deplacerDroite();
-        }
-    }
-
-    public static void main(String[] args) {
-
-        new CasseBrique();
-
-    }
 
     @Override
     public void mouseClicked(MouseEvent e) {
@@ -224,5 +207,30 @@ public class CasseBrique extends Canvas implements MouseListener {
     @Override
     public void mouseExited(MouseEvent e) {
 
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        //quand la touche gauche est enfoncée
+        if(e.getKeyCode() == 37) {
+            barre.deplacerGauche();
+        } else if (e.getKeyCode() == 39) {
+            //quand la touche droite est enfoncée
+            barre.deplacerDroite();
+        }
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+
+    }
+
+    public static void main(String[] args) {
+        new CasseBrique();
     }
 }

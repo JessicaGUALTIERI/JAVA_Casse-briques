@@ -2,30 +2,25 @@ package jeu.models;
 
 import java.awt.*;
 
-public class CanvasBouton {
-
-    protected int x = 0;
-    protected int y = 0;
-    protected int largeur = 100;
-    protected int hauteur = 30;
+public class CanvasBouton extends Rectangle {
     protected String texte = "";
     protected EvenementBouton evenement;
 
-    public CanvasBouton(int x, int y, String texte) {
-        this.x = x;
-        this.y = y;
+    public CanvasBouton(int x, int y, Color couleur, int largeur, int hauteur, String texte) {
+        super(x,y,couleur,largeur,hauteur);
         this.texte = texte;
     }
 
     public void dessiner(Graphics2D dessin) {
-        dessin.setColor(Color.black);
-        dessin.fillRect(x,y,largeur,hauteur);
+        super.dessiner(dessin);
         dessin.setColor(Color.white);
         dessin.drawString(texte, x+25, y+20);
     }
 
     public void clic() {
-        evenement.declenche();
+        if (evenement != null) {
+            evenement.declenche();
+        }
     }
 
     public boolean collision(int xSouris, int ySouris) {
