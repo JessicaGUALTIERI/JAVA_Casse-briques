@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.awt.event.MouseEvent;
 
 
-public class CasseBrique extends Canvas implements KeyListener {
+public class CasseBrique extends Canvas implements MouseListener {
 
     public static final int LARGEUR = 500;
     public static final int HAUTEUR = 600;
@@ -25,7 +25,7 @@ public class CasseBrique extends Canvas implements KeyListener {
     protected ArrayList<Bonus> listeBonusChute = new ArrayList<>();
     protected ArrayList<Bonus> listeBonusSuppr = new ArrayList<>();
     protected Barre barre = new Barre();
-    Bouton pause = new Bouton();
+    protected ArrayList<CanvasBouton> listeBouton = new ArrayList<>();
 
 
     public CasseBrique() {
@@ -42,7 +42,7 @@ public class CasseBrique extends Canvas implements KeyListener {
         fenetre.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         fenetre.setResizable(false);
         fenetre.requestFocus();
-        fenetre.addKeyListener(this);
+        this.addMouseListener(this);
 
         Container panneau = fenetre.getContentPane();
         panneau.add(this);
@@ -74,6 +74,13 @@ public class CasseBrique extends Canvas implements KeyListener {
             }
             yRandom += 22;
         }
+        CanvasBouton boutonPause = new CanvasBouton(100,50, "Pause");
+        boutonPause.addEvenementBouton(new EvenementPause());
+        listeBouton.add(boutonPause);
+
+        CanvasBouton boutonRestart = new CanvasBouton(220,50, "Restart");
+        boutonRestart.addEvenementBouton(new EvenementRecommencer());
+        listeBouton.add(boutonRestart);
 
         while(true) {
             try {
@@ -88,11 +95,14 @@ public class CasseBrique extends Canvas implements KeyListener {
                 // AFFICHAGE DE LA BARRE
                 barre.dessiner(dessin);
 
-                pause.dessiner(dessin);
-
                 // AFFICHAGE DES BRIQUES
                 for (Brique brique : listeBrique) {
                     brique.dessiner(dessin);
+                }
+
+                // AFFICHAGE DES BOUTONS
+                for (CanvasBouton bouton: listeBouton) {
+                    bouton.dessiner(dessin);
                 }
 
                 // DÉPLACEMENT DE LA BALLE ET CE QUE ÇA IMPLIQUE (COLLISION, RETRAIT DE BRIQUES ETC)
@@ -169,7 +179,7 @@ public class CasseBrique extends Canvas implements KeyListener {
         
     }
 
-    @Override
+
     public void keyPressed(KeyEvent e) {
 
         //quand la touche gauche est enfoncée
@@ -181,23 +191,38 @@ public class CasseBrique extends Canvas implements KeyListener {
         }
     }
 
-
-
-    @Override
-    public void keyTyped(KeyEvent e) {
-
-    }
-
-
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-
-    }
-
     public static void main(String[] args) {
 
         new CasseBrique();
+
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        for (CanvasBouton bouton : listeBouton) {
+            if (bouton.collision(e.getX(),e.getY())) {
+                bouton.clic();
+            }
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
 
     }
 }
