@@ -24,6 +24,7 @@ public class CasseBrique extends Canvas implements KeyListener, MouseListener {
     protected ArrayList<Bonus> listeBonusSuppr = new ArrayList<>();
     protected Barre barre = new Barre();
     protected ArrayList<CanvasBouton> listeBouton = new ArrayList<>();
+    protected boolean pause = false;
 
 
     public CasseBrique() {
@@ -49,14 +50,39 @@ public class CasseBrique extends Canvas implements KeyListener, MouseListener {
 
         fenetre.setVisible(true);
         this.createBufferStrategy(2);
+
+        CanvasBouton boutonPause = new CanvasBouton(LARGEUR/2-120,HAUTEUR-60,Color.BLACK,100,30,"PAUSE");
+
+        boutonPause.addEvenementBouton(() -> {
+            pause = !pause;
+        });
+
+        CanvasBouton boutonRecommencer = new CanvasBouton(LARGEUR/2+20, HAUTEUR-60, Color.BLACK, 100, 30, "RECOMMENCER");
+
+        boutonRecommencer.addEvenementBouton(() -> {
+            recommencer();
+        });
+
+        listeBouton.add(boutonRecommencer);
+        listeBouton.add(boutonPause);
+
+        recommencer();
         demarrer();
     }
 
-    public void demarrer() {
+    public void recommencer() {
+
+        pause = false;
+        listeBalle.clear();
+        listeBrique.clear();
+        listeBonus.clear();
+        listeBriqueSuppr.clear();
+        listeBonusSuppr.clear();
+        listeBonusChute.clear();
 
         // CRÉATION DE(S) BALLE(S) :
         for(int i = 0 ; i < 1 ; i++) {
-            listeBalle.add(new Balle(LARGEUR/2,HAUTEUR-100,20));
+            listeBalle.add(new Balle(LARGEUR/2,HAUTEUR-110,20));
         }
         // CRÉATION DES BRIQUES
         int yRandom = 0;
@@ -71,101 +97,101 @@ public class CasseBrique extends Canvas implements KeyListener, MouseListener {
             }
             yRandom += 22;
         }
-        CanvasBouton boutonPause = new CanvasBouton(LARGEUR/2-120,HAUTEUR-60, Color.BLACK,100,30,"Pause");
-        boutonPause.addEvenementBouton(
-                () -> System.out.println("PAUSE"));
-        listeBouton.add(boutonPause);
+    }
 
-        CanvasBouton boutonRestart = new CanvasBouton(LARGEUR/2+20,HAUTEUR-60, Color.BLACK, 100, 30, "Restart");
-        boutonRestart.addEvenementBouton(
-                () -> System.out.println("RECOMMENCER LA PARTIE")
-        );
-        listeBouton.add(boutonRestart);
-
+    public void demarrer() {
         while(true) {
             try {
                 // DÉBUT DU DESSIN
                 Graphics2D dessin = (Graphics2D) this.getBufferStrategy().getDrawGraphics();
+                if (!pause) {
 
+                    // CE QUI RESET TOUT EN BLANC ENTRE DEUX IMAGES
+                    dessin.setColor(Color.WHITE);
+                    dessin.fillRect(0,0, LARGEUR, HAUTEUR);
 
-                // CE QUI RESET TOUT EN BLANC ENTRE DEUX IMAGES
-                dessin.setColor(Color.WHITE);
-                dessin.fillRect(0,0, LARGEUR, HAUTEUR);
+                    // AFFICHAGE DE LA BARRE
+                    barre.dessiner(dessin);
 
-                // AFFICHAGE DE LA BARRE
-                barre.dessiner(dessin);
-
-                // AFFICHAGE DES BRIQUES
-                for (Brique brique : listeBrique) {
-                    brique.dessiner(dessin);
-                }
-
-                // AFFICHAGE DES BOUTONS
-                for (CanvasBouton bouton: listeBouton) {
-                    bouton.dessiner(dessin);
-                }
-
-                // DÉPLACEMENT DE LA BALLE ET CE QUE ÇA IMPLIQUE (COLLISION, RETRAIT DE BRIQUES ETC)
-                for(Balle balle : listeBalle) {
-                    balle.dessiner(dessin);
-                    balle.deplacement();
-
-                    // SI LA BALLE TAPE LA BARRE, ON INVERSE LE DÉPLACEMENT DE LA BALLE
-                    if(barre.collision(balle)){
-                        balle.setVitesseVertical(-balle.getVitesseVertical());
+                    // AFFICHAGE DES BRIQUES
+                    for (Brique brique : listeBrique) {
+                        brique.dessiner(dessin);
                     }
 
-                    // SI LA BALLE TAPE UNE BRIQUE,
+                    // AFFICHAGE DES BOUTONS
+                    for (CanvasBouton bouton: listeBouton) {
+                        bouton.dessiner(dessin);
+                    }
+
+                    // DÉPLACEMENT DE LA BALLE ET CE QUE ÇA IMPLIQUE (COLLISION, RETRAIT DE BRIQUES ETC)
+                    for(Balle balle : listeBalle) {
+                        balle.dessiner(dessin);
+                        balle.deplacement();
+
+                        // SI LA BALLE TAPE LA BARRE, ON INVERSE LE DÉPLACEMENT DE LA BALLE
+                        if (barre.collision(balle)) {
+                            balle.setVitesseVertical(-balle.getVitesseVertical());
+                        }
+
+                        // SI LA BALLE TAPE UNE BRIQUE,
                         // ON INVERSE LE DEPLACEMENT DE LA BALLE
                         // ON AJOUTE CETTE BRIQUE A LA LISTE DES BRIQUES A SUPPRIMER
                         // ON INCRÉMENTE LE COMPTEUR POUR LA FIN DU PROGRAMME
-                    for (Brique brique : listeBrique) {
-                        if (brique.collision(balle)) {
-                            balle.setVitesseVertical(-balle.getVitesseVertical());
-                            listeBriqueSuppr.add(brique);
-                            compteurBrique++;
-                        }
-                    }
-
-                    // ET ICI ON RETIRE LA BRIQUE TOUCHÉE
-                    for (Brique brique : listeBriqueSuppr) {
-                        listeBrique.remove(brique);
-                        for (Bonus bonus : listeBonus) {
-                            if (brique.getCentreX() == bonus.getCentreX()- bonus.getDiametre()/2 && brique.getCentreY() == bonus.getCentreY()- bonus.getDiametre()/2) {
-                                listeBonusChute.add(bonus);
+                        for (Brique brique : listeBrique) {
+                            if (brique.collision(balle)) {
+                                balle.setVitesseVertical(-balle.getVitesseVertical());
+                                listeBriqueSuppr.add(brique);
+                                compteurBrique++;
                             }
                         }
-                    }
 
-
-
-                    for (Bonus bonus : listeBonusChute) {
-                        if (bonus.getChance20() > 8) { // Condition de 20% de chance qu'un bonus apparaisse
-                            bonus.dessiner(dessin);
-                            bonus.chute();
-                            if (barre.collision(bonus)) {
-                                listeBonusSuppr.add(bonus); // Si collision, on arrêtera de dessiner ce bonus (voir ci-dessous)
-                                barre.barreBonus();
+                        // ET ICI ON RETIRE LA BRIQUE TOUCHÉE
+                        for (Brique brique : listeBriqueSuppr) {
+                            listeBrique.remove(brique);
+                            for (Bonus bonus : listeBonus) {
+                                if (brique.getCentreX() == bonus.getCentreX() - bonus.getDiametre() / 2 && brique.getCentreY() == bonus.getCentreY() - bonus.getDiametre() / 2) {
+                                    listeBonusChute.add(bonus);
+                                }
                             }
                         }
-                    }
 
-                    for (Bonus bonus : listeBonusSuppr) { // On stoppe le dessin du bonus si collision
-                        listeBonusChute.remove(bonus);
-                    }
+                        for (Bonus bonus : listeBonusChute) {
+                            if (bonus.getChance20() > 8) { // Condition de 20% de chance qu'un bonus apparaisse
+                                bonus.dessiner(dessin);
+                                bonus.chute();
+                                if (barre.collision(bonus)) {
+                                    listeBonusSuppr.add(bonus); // Si collision, on arrêtera de dessiner ce bonus (voir ci-dessous)
+                                    barre.barreBonus();
+                                }
+                            }
+                        }
 
+                        for (Bonus bonus : listeBonusSuppr) { // On stoppe le dessin du bonus si collision
+                            listeBonusChute.remove(bonus);
+                        }
 
-                    // ICI C'EST LES DEUX CONDITIONS DE FIN DU PROGRAMME (PAS FINIE)
+                        // ICI C'EST LES DEUX CONDITIONS DE FIN DU PROGRAMME (PAS FINIE)
                         // VICTOIRE SI LES 50 BRIQUES SONT DÉTRUITES
-                    /*if (compteurBrique == 50) {
-                        System.out.println("GGWP +20LP");
-                        break;
+                        if (compteurBrique == 50) {
+                            pause = true;
+                            Thread.sleep(1000);
+                            dessin.setColor(Color.WHITE);
+                            dessin.fillRect(0,0, LARGEUR, HAUTEUR);
+                            dessin.setColor(Color.BLACK);
+                            dessin.drawString("VICTOIRE !", 220, 260);
+                            break;
+                        }
+                            // DÉFAITE SI LA BALLE PASSE SOUS LA BARRE
+                        if (balle.getCentreY()>HAUTEUR-50) {
+                            pause = true;
+                            Thread.sleep(1000);
+                            dessin.setColor(Color.WHITE);
+                            dessin.fillRect(0,0, LARGEUR, HAUTEUR);
+                            dessin.setColor(Color.BLACK);
+                            dessin.drawString("DÉFAITE !", 220, 260);
+                            break;
+                        }
                     }
-                        // DÉFAITE SI LA BALLE PASSE SOUS LA BARRE
-                    if (balle.getCentreY()>HAUTEUR-50) {
-                        System.out.println("LOOSER -48LP");
-                        break;
-                    }*/
                 }
                 // FIN DU DESSIN
                 dessin.dispose();
