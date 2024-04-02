@@ -51,13 +51,13 @@ public class CasseBrique extends Canvas implements KeyListener, MouseListener {
         fenetre.setVisible(true);
         this.createBufferStrategy(2);
 
-        CanvasBouton boutonPause = new CanvasBouton(LARGEUR/2-120,HAUTEUR-60,Color.BLACK,100,30,"PAUSE");
+        CanvasBouton boutonPause = new CanvasBouton(LARGEUR/2-170,HAUTEUR-60,Color.BLACK,150,30,"PAUSE");
 
         boutonPause.addEvenementBouton(() -> {
             pause = !pause;
         });
 
-        CanvasBouton boutonRecommencer = new CanvasBouton(LARGEUR/2+20, HAUTEUR-60, Color.BLACK, 100, 30, "RECOMMENCER");
+        CanvasBouton boutonRecommencer = new CanvasBouton(LARGEUR/2 + 20, HAUTEUR-60, Color.BLACK, 150, 30, "RECOMMENCER");
 
         boutonRecommencer.addEvenementBouton(() -> {
             recommencer();
